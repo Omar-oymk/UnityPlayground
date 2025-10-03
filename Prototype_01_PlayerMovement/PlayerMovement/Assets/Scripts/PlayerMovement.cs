@@ -10,24 +10,40 @@ public class PlayerMovement : MonoBehaviour
     [Space]
     [Header("Jumping")]
     [SerializeField] float jumpingVelocity = 12f;
+    [SerializeField] int jumpCounts = 2;
+    [SerializeField] Transform feetPosition;
+    [SerializeField] float raycastRadius = 0.2f;
+    [SerializeField] LayerMask groundLayer;
 
     Rigidbody2D rb;
     float targetSpeed;
     float finalSpeed;
+    bool isGrounded = false;
+    bool wasGrounded = false;
     bool isFacingRight = true;
-    bool isGrounded = true;
+    int jumpRemaining;
     void Awake() => rb = GetComponent<Rigidbody2D>();
 
     void Update()
     {
+        isGrounded = Physics2D.OverlapCircle(feetPosition.position, raycastRadius, groundLayer);
+
+        if (!wasGrounded && isGrounded)
+        {
+            jumpRemaining = jumpCounts;
+        }
+
+        wasGrounded = isGrounded;
+        
         // we get input axis aka move left or right or dont
         float moveInput = Input.GetAxis("Horizontal");
         targetSpeed = speed * moveInput;
         Flip(moveInput);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && jumpRemaining > 0)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpingVelocity);
+            jumpRemaining--;
         }
     }
 
@@ -58,5 +74,11 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale.z);
             isFacingRight = false;
         }
-    }   
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(feetPosition.position, raycastRadius);
+    }
 }
