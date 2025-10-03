@@ -1,14 +1,21 @@
 using Unity.Hierarchy;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Horizontal Movement")]
     [SerializeField] float speed = 5.0f;
     [SerializeField] float acceleration = 10f;
+    [Space]
+    [Header("Jumping")]
+    [SerializeField] float jumpingVelocity = 12f;
+
     Rigidbody2D rb;
     float targetSpeed;
     float finalSpeed;
     bool isFacingRight = true;
+    bool isGrounded = true;
     void Awake() => rb = GetComponent<Rigidbody2D>();
 
     void Update()
@@ -17,6 +24,11 @@ public class PlayerMovement : MonoBehaviour
         float moveInput = Input.GetAxis("Horizontal");
         targetSpeed = speed * moveInput;
         Flip(moveInput);
+
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocityX, jumpingVelocity);
+        }
     }
 
     void FixedUpdate()
@@ -46,5 +58,5 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale.z);
             isFacingRight = false;
         }
-    }
+    }   
 }
