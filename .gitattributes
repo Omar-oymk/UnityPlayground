@@ -1,0 +1,17 @@
+# Normalize line endings to LF
+* text=auto eol=lf
+
+# Force C# and shader scripts to use LF
+*.cs text eol=lf
+*.shader text eol=lf
+
+# Unity specific files (binary, don’t touch line endings)
+*.unity binary
+*.prefab binary
+*.asset binary
+*.meta text eol=lf
+*.png binary
+*.jpg binary
+*.dll binary
+*.exe binary
+
